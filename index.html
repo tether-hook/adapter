@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>lowkey-profile // adapter</title>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * {
@@ -20,7 +20,7 @@
             justify-content: center;
             align-items: center;
             background: #0a0a0a;
-            font-family: 'Montserrat', sans-serif;
+            font-family: 'Poppins', sans-serif;
         }
 
         #video-bg {
@@ -32,6 +32,17 @@
             object-fit: cover;
             z-index: -1;
             opacity: 0.6;
+            display: none;
+        }
+
+        .bg-fallback {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #121212 0%, #000000 100%);
+            z-index: -2;
         }
 
         .container {
@@ -39,6 +50,7 @@
             z-index: 1;
             position: relative;
             padding: 20px;
+            width: 100%;
         }
 
         .username {
@@ -51,6 +63,7 @@
                 0 0 20px #00a2ff, 
                 0 0 40px #0066ff;
             animation: neonGlow 1.5s infinite alternate;
+            font-weight: 700;
         }
 
         .social-links {
@@ -118,14 +131,31 @@
             100% { text-shadow: 0 0 15px #00e1ff, 0 0 30px #00a2ff, 0 0 60px #0066ff; }
         }
 
+        @media (min-width: 769px) {
+            #video-bg {
+                display: block;
+            }
+        }
+
         @media (max-width: 768px) {
-            .username { font-size: 2.5rem; }
-            .social-btn { width: 60px; height: 60px; font-size: 2rem; }
+            .username { 
+                font-size: 2.5rem; 
+                margin-bottom: 2rem;
+            }
+            .social-btn { 
+                width: 60px; 
+                height: 60px; 
+                font-size: 2rem; 
+            }
+            .social-links {
+                gap: 1.5rem;
+            }
         }
     </style>
 </head>
 <body>
-    <video id="video-bg" autoplay muted loop>
+    <div class="bg-fallback"></div>
+    <video id="video-bg" autoplay muted loop playsinline>
         <source src="123.mp4" type="video/mp4">
     </video>
 
@@ -152,6 +182,20 @@
         const nick = urlParams.get('nick');
         if (nick) {
             document.querySelector('.username').textContent = nick.toUpperCase();
+        }
+
+        function isMobile() {
+            return /Android|webOS|iPhone|iPad|Opera Mini/i.test(navigator.userAgent);
+        }
+
+        document.getElementById('video-bg').addEventListener('error', function() {
+            this.style.display = 'none';
+            document.querySelector('.bg-fallback').style.zIndex = '-1';
+        });
+
+        if (isMobile()) {
+            document.getElementById('video-bg').style.display = 'none';
+            document.querySelector('.bg-fallback').style.zIndex = '-1';
         }
     </script>
 </body>
